@@ -8,13 +8,10 @@
   <title>Comm-life</title>
   <!-- stylesheet files -->
   <link rel="stylesheet" href="css/all.min.css">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
-
   <style>
     body {
       background: linear-gradient(315deg, #596094 0%, #1c13a0 100%);
-
     }
 
     a {
@@ -46,7 +43,7 @@
       clear: both;
     }
 
-    div#main {
+    div #main {
       clear: both;
       padding: 20px 0 20px 0;
     }
@@ -89,19 +86,17 @@
     }
 
     td {
-      font-size: 20px
+      font-size: 20px;
     }
 
   </style>
 </head>
 
-
-
 <body>
-  <a href="./index.html"><i class="fa-regular fa-circle-right"></i></a>
+  <a href="./index.html" data-name="go back to home"><i class="fa-regular fa-circle-right"></i></a>
   <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
   <div id="wrap">
-    <h1 class="appen">Binary Character Table</h1>
+    <h1 class="appen">Braille Character Table</h1>
     <div id="main">
       <center>
         <table width="75%" cellpadding="3" cellspacing="1">
@@ -272,6 +267,17 @@
     </div>
 
     <script src="./js/all.min.js"></script>
+    <script>
+      const elements = document.querySelectorAll('[data-name]');
+
+      for (const element of elements) {
+        element.addEventListener('click', function () {
+          const name = this.getAttribute('data-name');
+          const message = new SpeechSynthesisUtterance(name);
+          window.speechSynthesis.speak(message);
+        });
+      }
+    </script>
 </body>
 
 </html>

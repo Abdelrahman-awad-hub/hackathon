@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <textarea id="textarea"></textarea>
+    <button id="submit" data-name="converter">convert</button>
+    <div id="result"></div>
+    <button id="play">play</button>
+    <script>
+        const textarea = document.getElementById('textarea');
+        const submitButton = document.getElementById('submit');
+        const resultDiv = document.getElementById('result');
+
+        submitButton.addEventListener('click', function () {
+            const text = textarea.value;
+
+            // Convert the text to binary
+            let binary = '';
+            for (const char of text) {
+                const charCode = char.charCodeAt(0);
+                binary += charCode.toString(2).padStart(8, '0');
+            }
+
+            // Display the result
+            resultDiv.textContent = binary;
+
+            // Define the frequency for the beep sound
+            const frequency = 440;
+
+            // Define the duration for each beep
+            const duration = 200;
+
+            // Check if the device supports the Vibration API
+            if ('vibrate' in navigator) {
+                // Vibrate the device
+                for (const digit of binary) {
+                    if (digit === '1') {
+                        navigator.vibrate(duration);
+                    }
+                }
+            } else {
+                // Check if the user has granted permission to play audio
+                if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
+                    // Create an audio context
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // Start playing the sound
+                    let startTime = audioContext.currentTime;
+                    for (const digit of binary) {
+                        if (digit === '1') {
+                            const oscillator = audioContext.createOscillator();
+                            oscillator.frequency.value = frequency;
+                            oscillator.connect(audioContext.destination);
+                            oscillator.start(startTime);
+                            oscillator.stop(startTime + duration / 1000);
+                            startTime += duration / 1000;
+                        } else {
+                            startTime += duration / 1000;
+                        }
+                    }
+                } else {
+                    console.error('AudioContext is not supported in this browser.');
+                }
+            }
+        });
+
+        window.onload = function () {
+            textarea.focus();
+        };
+
+        const playButton = document.getElementById('play');
+
+        playButton.addEventListener('click', function () {
+            // Define the frequency for the beep sound
+            const frequency = 440;
+
+            // Define the duration for the beep
+            const duration = 200;
+
+            // Check if the user has granted permission to play audio
+            if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
+                // Create an audio context
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Start playing the sound
+                const oscillator = audioContext.createOscillator();
+                oscillator.frequency.value = frequency;
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+            } else {
+                console.error('AudioContext is not supported in this browser.');
+            }
+        });
+
+
+        const elements = document.querySelectorAll('[data-name]');
+
+        for (const element of elements) {
+            element.addEventListener('click', function () {
+                const name = this.getAttribute('data-name');
+                const message = new SpeechSynthesisUtterance(name);
+                window.speechSynthesis.speak(message);
+            });
+        }
+
+    </script>
+
+
+</body>
+
+</html>
